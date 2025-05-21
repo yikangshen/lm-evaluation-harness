@@ -348,14 +348,14 @@ class SGLangLM(TemplateLM):
         if not add_special_tokens:
             add_special_tokens = False or self.add_bos_token
         if isinstance(string, str):
-            encoding = self.tokenizer(
+            encoding = self.tokenizer.encode(
                 string,
                 add_special_tokens=add_special_tokens,
                 # truncation=truncation,
                 # return_attention_mask=False,
             )
         else:
-            encoding = [self.tokenizer(
+            encoding = [self.tokenizer.encode(
                 s,
                 add_special_tokens=add_special_tokens,
                 # truncation=truncation,
