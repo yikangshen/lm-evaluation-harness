@@ -223,7 +223,7 @@ class SGLangLM(TemplateLM):
             desc="Running generate_until requests",
         )
         # for each different set of kwargs, we execute all requests, by batch.
-        eos = self.tokenizer.decode(self.eot_token_id)
+        eos = self.tokenizer.decode([self.eot_token_id])[0]
         for chunk in chunks:
             context_and_encoding, all_gen_kwargs = zip(*chunk)
             context, context_encoding = zip(*context_and_encoding)
@@ -347,12 +347,20 @@ class SGLangLM(TemplateLM):
     ) -> Union[List[int], List[List[int]]]:
         if not add_special_tokens:
             add_special_tokens = False or self.add_bos_token
-        encoding: Union[List[List[int]], List[int]] = self.tokenizer(
-            string,
-            add_special_tokens=add_special_tokens,
-            truncation=truncation,
-            return_attention_mask=False,
-        ).input_ids
+        if isinstance(string, str):
+            encoding = self.tokenizer(
+                string,
+                add_special_tokens=add_special_tokens,
+                # truncation=truncation,
+                # return_attention_mask=False,
+            )
+        else:
+            encoding = [self.tokenizer(
+                s,
+                add_special_tokens=add_special_tokens,
+                # truncation=truncation,
+                # return_attention_mask=False,
+            ) for s in string]
 
         # left-truncate the encoded context to be at most `left_truncate_len` tokens long
         if left_truncate_len:
