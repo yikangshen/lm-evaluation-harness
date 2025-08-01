@@ -36,6 +36,7 @@ from lm_eval import utils
 from lm_eval.api.instance import Instance
 from lm_eval.api.model import TemplateLM
 from lm_eval.models.utils import Collator, chunks, configure_pad_token
+import xai_tokenizer
 
 
 eval_logger = logging.getLogger(__name__)
@@ -62,7 +63,7 @@ class TemplateAPI(TemplateLM):
         # however the requests can be sent as a string if the API doesn't support token inputs.
         # use tokenized_requests=False
         tokenizer_backend: Optional[
-            Literal["tiktoken", "huggingface", "None", "none"]
+            Literal["tiktoken", "huggingface", "xai_tokenizer", "None", "none"]
         ] = "huggingface",
         truncate: bool = False,
         # number of concurrent requests. More useful if not batching
@@ -162,6 +163,8 @@ class TemplateAPI(TemplateLM):
                             f"Passed `base_url={self.base_url}` but using (OpenAI) Tiktoken tokenizer backend. "
                             "Pass `tokenizer_backend=huggingface` and provide the HF tokenizer name if your model does not use Tiktoken."
                         )
+                elif self.tokenizer_backend == "xai_tokenizer":
+                    self.tokenizer = xai_tokenizer.from_xtok_json("/data/datasets/tokenizers/model/v6/v6.xtok.json")
             else:
                 import transformers
 
