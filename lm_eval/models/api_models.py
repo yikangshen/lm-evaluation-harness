@@ -166,15 +166,19 @@ class TemplateAPI(TemplateLM):
                 elif self.tokenizer_backend == "xai_tokenizer":
                     self.tokenizer = xai_tokenizer.Bpe2Tokenizer.from_xtok_json("xtok-json", "/data/datasets/tokenizers/model/v6/v6.xtok.json")
             else:
-                import transformers
+                if self.tokenizer_backend == "xai_tokenizer":
+                    tokenizer_path = tokenizer.split(":")
+                    self.tokenizer = xai_tokenizer.Bpe2Tokenizer.from_xtok_json(tokenizer_path[0], tokenizer_path[1])
+                else:
+                    import transformers
 
-                assert isinstance(tokenizer, str), "tokenizer must be a string"
-                self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-                    tokenizer,
-                    trust_remote_code=trust_remote_code,
-                    revision=revision,
-                    use_fast=use_fast_tokenizer,
-                )
+                    assert isinstance(tokenizer, str), "tokenizer must be a string"
+                    self.tokenizer = transformers.AutoTokenizer.from_pretrained(
+                        tokenizer,
+                        trust_remote_code=trust_remote_code,
+                        revision=revision,
+                        use_fast=use_fast_tokenizer,
+                    )
 
     @abc.abstractmethod
     def _create_payload(
