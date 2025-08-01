@@ -164,7 +164,7 @@ class TemplateAPI(TemplateLM):
                             "Pass `tokenizer_backend=huggingface` and provide the HF tokenizer name if your model does not use Tiktoken."
                         )
                 elif self.tokenizer_backend == "xai_tokenizer":
-                    self.tokenizer = xai_tokenizer.Bpe2Tokenizer.from_xtok_json("/data/datasets/tokenizers/model/v6/v6.xtok.json")
+                    self.tokenizer = xai_tokenizer.Bpe2Tokenizer.from_xtok_json("xtok-json", "/data/datasets/tokenizers/model/v6/v6.xtok.json")
             else:
                 import transformers
 
